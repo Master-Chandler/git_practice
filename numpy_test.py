@@ -184,6 +184,7 @@ elif t==1:
 else:
 	print('t={}'.format(t))
 '''
+'''
 #read nc
 import Ngl,Nio
 import numpy as np
@@ -217,6 +218,19 @@ Ngl.text_ndc(wks,f.variables['hgt'].attributes['units'],\
 0.95,0.78,txres)
 Ngl.frame(wks)
 Ngl.end()
+'''
+import Nio
+fname="/home/tangyuheng/data_ncl/shco12.txt"
+f1name="shco12_c.txt"
+with open(fname,'r') as f:
+	shlines=f.readlines()
+
+print(shlines)
+#shline1s=shlines.split('\n')
+#for shline1 in shline1s:
+#	print(shline1)
+print('\n'.join(shlines))
+
 
 
 
