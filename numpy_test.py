@@ -1,4 +1,4 @@
-import numpy as N
+import numpy as np
 '''
 mylist=[[2,3,-5],[21,-2,1]]
 a=N.array(mylist,dtype='d')
@@ -185,7 +185,7 @@ else:
 	print('t={}'.format(t))
 '''
 '''
-#read nc
+#read nc绘图
 import Ngl,Nio
 import numpy as np
 fname="/home/tangyuheng/data_ncl/hgt.1986.nc"
@@ -219,7 +219,8 @@ Ngl.text_ndc(wks,f.variables['hgt'].attributes['units'],\
 Ngl.frame(wks)
 Ngl.end()
 '''
-import Nio
+'''
+#文本文件的读取
 fname="/home/tangyuheng/data_ncl/shco12.txt"
 f1name="shco12_c.txt"
 with open(fname,'r') as f:
@@ -229,7 +230,115 @@ print(shlines)
 #shline1s=shlines.split('\n')
 #for shline1 in shline1s:
 #	print(shline1)
-print('\n'.join(shlines))
+#print('****')
+print('****'+'****'.join(shlines))
+'''
+'''
+#数组字符的转型
+import numpy as np
+a=['3.4','2.1','-2.6']
+#anum=np.zeros(len(a),'d')
+#for i in range(len(a)):
+#	anum[i]=float(a[i])
+#或者
+anum=np.array(a).astype('d')
+print(anum)
+
+T=[273.4,265.5,277.7,285.5]
+outputstr=['\n']*len(T)
+for i in range(len(T)):
+	outputstr[i]=str(T[i])+outputstr[i]
+fileout=open('one_col_temp.txt','w')
+fileout.writelines(outputstr)
+fileout.close()
+filein=open('one_col_temp.txt','r')
+inputstr=filein.readlines()
+filein.close()
+Tnew=np.array(inputstr).astype('d')
+print(inputstr)
+'''
+'''
+#NumPy基础：数组与向量化计算
+import numpy as np
+data=np.random.randn(2,3)
+data1=[[1,2.3,4,5],[1,2,3,4]]
+arr1=np.array(data1)
+print(arr1.dtype)
+arr2=np.empty((2,3))
+print(np.arange(15).dtype)
+arr1=np.array([1,2,3],np.float64)
+print(arr1.dtype)
+float32_arr1=arr1.astype(np.float32)
+print(float32_arr1.dtype)
+numeric_strings=np.array(['1.25','2','-3.48'],dtype=np.string_)
+print(numeric_strings.astype(float))
+arr=np.array([[1.,2,3],[4.,5,6]])
+print((arr**2>arr).dtype)
+
+arr=np.arange(10)
+print(arr[5:8])#5 6 7
+arr[5:8]=12 #对切片的改变会体现在原数组上
+print(arr)
+c=arr[5:8].copy()
+
+print(c,arr[5:8])
+arr2d=np.array([[1,2,3],[4,5,6],[7,8,9]])
+print(arr2d[2],arr2d[2][1])
+arr3d=np.array([[[1,2,3],[4,5,6]],[[7,8,9],[10,11,12]]])
+print(arr3d.shape)
+print(arr3d[0],'\n\n',arr3d[0,:,:])
+old_values=arr3d[0].copy()
+arr3d[0]=43
+print(arr3d)
+arr3d[0]=old_values.copy()
+print(arr3d)
+print(arr2d[:2],arr2d[1,:2])
+names=np.array(['Bob','Joe','Will','Bob','Will','Joe','Joe'])
+data=np.random.randn(7,4)
+print(names=='Bob','\n',data[(names=='Bob')|(names=='Will')])
+data[data<0]=0
+print(data)
+#神奇索引
+arr=np.empty((8,4))
+for i in range(8):
+	arr[i]=i
+print(arr)
+print(arr[[4,3,0,6]])
+print(arr[[-3,-5,-7]])
+arr=np.arange(32).reshape((8,4))
+print(arr)
+print(arr[[1,5,7],[0,3,1]])
+print(arr[[1,5,7,2]][:,[0,3,1,2]])
+print(arr.T)
+print("***************")
+arr=np.arange(24).reshape((2,3,4))
+print(arr)
+print(arr.transpose(1,2,0))
+print(arr.shape)
+'''
+
+#通用函数：快速的逐元素数组函数
+arr=np.arange(10)
+print(np.sqrt(arr))
+x=np.random.randn(8)
+y=np.random.randn(8)
+print(x,y)
+np.maximum(x,y)#比较x和y各个元素，选出最小的元素
+arr=np.random.randn(7)*5
+print(arr)
+remainder,whole_part=np.modf(arr)
+print(remainder,whole_part)
+
+#使用数组进行面向数组编程
+points=np.arange(-5,5,0.01)#1000 equally spaced points
+xs,ys=np.meshgrid(points,points)
+print(ys)
+z=np.sqrt(xs**2+ys**2)
+print(z)
+import matplotlib.pyplot as plt
+plt.imshow(z,cmap=plt.cm.gray)
+plt.colorbar()
+plt.title("Image plot of $\sqrt(x^2+y^2) for a grid of values")
 
 
 
