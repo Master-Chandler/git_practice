@@ -1,7 +1,8 @@
+# -*- coding: utf-8 -*-
 from __future__ import print_function
 import operator
 from math import log
-import decisionTreePlot as dtPlot
+#import decisionTreePlot as dtPlot
 from collections import Counter
 
 
@@ -15,7 +16,6 @@ def createDataSet():
 	return dataSet,labels
 	
 def calcShannonEnt(dataSet):
-	#求list的长度，表示计算参与训练的数据量
 	numEntries=len(dataSet)
 	#计算分类标签label出现的次数
 	labelCounts={}
@@ -25,7 +25,7 @@ def calcShannonEnt(dataSet):
 		currentLabel=featVec[-1]
 		#为所有可能的分类创建字典，如果当前的键值不存在，则扩展字典，并将当前键值加入字典
 		#每个键值都记录了当前类别出现的次数
-		if currentLabel not in LabelCounts.keys():
+		if currentLabel not in labelCounts.keys():
 			labelCounts[currentLabel]=0
 		labelCounts[currentLabel]+=1
 		#对于label标签的占比，求出label标签的香农熵
@@ -35,28 +35,29 @@ def calcShannonEnt(dataSet):
 		prob=float(labelCounts[key])/numEntries
 		#计算香农熵，以2为底求对数
 		shannonEnt-=prob*log(prob,2)
-return shannonEnt
+	return shannonEnt
 
 def splitDataSet(dataSet, index, value):
 	
-    """splitDataSet(通过遍历dataSet数据集，求出index对应的colnum列的值为value的行)
-        就是依据index列进行分类，如果index列的数据等于 value的时候，就要将 index 划分到我们创建的新的数据集中
-    Args:
-        dataSet 数据集                 待划分的数据集
-        index 表示每一行的index列        划分数据集的特征
-        value 表示index列对应的value值   需要返回的特征的值。
-    Returns:
-        index列为value的数据集【该数据集需要排除index列】
-    """
-    retDataSet=[]
-    for featVec in dataSet:
+	"""splitDataSet(通过遍历dataSet数据集，求出index对应的colnum列的值为value的行)
+		就是依据index列进行分类，如果index列的数据等于 value的时候，就要将 index 划分到我们创建的新的数据集中
+	Args:
+		dataSet 数据集                 待划分的数据集
+		index 表示每一行的index列        划分数据集的特征
+		value 表示index列对应的value值   需要返回的特征的值。
+	Returns:
+		index列为value的数据集【该数据集需要排除index列】
+	"""
+	retDataSet=[]
+	reducedFeatVec=[]
+	for featVec in dataSet:
 		#index列为value的数据集【该数据集需要排除index列】
 		#判断index列的值是否为value
 		if featVec[index]==value:
 			#chop out index used for splitting
 			#[:index]表示前index行，即index为2，就是去featVec的前index行
 			reducedFeatVec=featVec[:index]
-			 '''
+			'''
             请百度查询一下： extend和append的区别
             music_media.append(object) 向列表中添加一个对象object
             music_media.extend(sequence) 把一个序列seq的内容添加到列表中 (跟 += 在list运用类似， music_media += sequence)
@@ -78,14 +79,15 @@ def splitDataSet(dataSet, index, value):
             #结果：
             #[1, 2, 3, [4, 5, 6], 7, 8, 9]
             '''
-            reducedFeatVec.extend(featVec[index+1:])
-            #跳过index取index+1后面的数据
-            #收集结果值，index列为value的行【该行需要排除index列】
-            retDataSet.append(reducedFeatVec)
-return retDataSet
+			reducedFeatVec.extend(featVec[index+1:])
+			#跳过index取index+1后面的数据
+			#收集结果值，index列为value的行【该行需要排除index列】
+			retDataSet.append(reducedFeatVec)
+	return retDataSet
 
 def chooseBestFeatureToSplit(dataSet):
-		     """chooseBestFeatureToSplit(选择最好的特征)
+	
+	"""chooseBestFeatureToSplit(选择最好的特征)
 
     Args:
         dataSet 数据集
@@ -115,25 +117,25 @@ def chooseBestFeatureToSplit(dataSet):
 			#计算概率
 			prob=len(subDataSet)/float(len(dataSet))
 			#计算信息熵
-			newEntropy+=prob*calcSHannonEnt(subDataSet)
+			newEntropy+=prob*calcShannonEnt(subDataSet)
 			#gain[信息增益]:划分数据集前后的信息变化，获取信息熵最大的值				
 			#信息增益是熵的减少或者是数据无序度的减少。最后，比较所有特征中的信息增益，返回最好特征划分索引值
 			infoGain=baseEntropy-newEntropy
-			print('infoGain=','infoGain,bestFeature=',i,baseEntropy,newEntropy)
+			print('infoGain=',infoGain,'bestFeature=',i,baseEntropy,newEntropy)
 			if(infoGain>bestInfoGain):
 				bestInfoGain=infoGain
 				bestFeature=i
-return bestFeature
+	return bestFeature
 
 def majorityCnt(classList):
-    """majorityCnt(选择出现次数最多的一个结果)
-    Args:
-        classList label列的集合
-    Returns:
-        bestFeature 最优的特征列
-    """
-    classCount={}
-    for vote in classList:
+	"""majorityCnt(选择出现次数最多的一个结果)
+	Args:
+		classList label列的集合
+	Returns:
+		bestFeature 最优的特征列
+	"""
+	classCount={}
+	for vote in classList:
 		if vote not in classCount.keys():
 			classCount[vote]=0
 		classCount[vote]+=1
@@ -157,6 +159,7 @@ def createTree(dataSet,labels):
 	#选择最优的列，得到最优列对应的label含义
 	bestFeat=chooseBestFeatureToSplit(dataSet)
 	#获取label的名称
+	#print(bestFeat)
 	bestFeatLabel=labels[bestFeat]
 	#初始化myTree
 	myTree={bestFeatLabel:{}}
@@ -171,7 +174,8 @@ def createTree(dataSet,labels):
 		subLabels=labels[:]
 		#遍历当前选择特征包含的所有属性值，在每个数据集划分上递归调用函数creatTree()
 		myTree[bestFeatLabel][value]=createTree(splitDataSet(dataSet,bestFeat,value),subLabels)
-return myTree
+	return myTree
+dataSet,labels=createDataSet()
 createTree(dataSet,labels)	
 
 	
